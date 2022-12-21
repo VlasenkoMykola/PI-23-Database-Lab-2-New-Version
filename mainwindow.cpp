@@ -81,6 +81,14 @@ MainWindow::MainWindow(QWidget *parent)
     listParamViewsSQL << "SELECT Players.ID, Players.name FROM Characters LEFT JOIN Players ON Players.id = playerid GROUP BY playerid HAVING COUNT(Characters.ID) in ( SELECT COUNT(ID) FROM Characters WHERE playerid = 1 );";
     vectorParamViewsIntParams.push_back(1);
     vectorParamViewsStrParams.push_back(0);
+    listParamViews << "Знайти всіх гравців, що мають персонажів тих же класів, як i персонажі гравця з ідом @INTEGER0@";
+    listParamViewsSQL << "SELECT Players.name FROM Players AS P WHERE NOT EXISTS ( SELECT C2.classid FROM Characters AS C2 WHERE C2.playerid=@INTEGER0@ AND NOT EXISTS ( SELECT C1.playerid FROM Characters AS C1 WHERE C1.classid = C2.classid AND AND P.playerid=C1.playerid ) );";
+    vectorParamViewsIntParams.push_back(1);
+    vectorParamViewsStrParams.push_back(0);
+    listParamViews << "Знайти всіх гравців, що мають персонажів тих і рівно тих же класів, як i персонажі гравця з ідом @INTEGER0@";
+    listParamViewsSQL << "SELECT Players.name FROM Players AS P WHERE NOT EXISTS ( SELECT C2.classid FROM Characters AS C2 WHERE C2.playerid=@INTEGER0@ AND NOT EXISTS ( SELECT C1.playerid FROM Characters AS C1 WHERE C1.classid = C2.classid AND AND P.playerid=C1.playerid ) ) AND NOT EXISTS ( SELECT C1.classid FROM Characters AS C1 WHERE P.playerid=C1.playerid AND NOT EXISTS ( SELECT C2.playerid FROM Characters AS C2 WHERE C2.playerid=@INTEGER0@ AND C1.classid = C2.classid ) ) ;";
+    vectorParamViewsIntParams.push_back(1);
+    vectorParamViewsStrParams.push_back(0);
 
     ui->comboBoxParamViews->addItems(listParamViews);
     QStringList listEmptyParamViews;
